@@ -200,3 +200,26 @@ fn part_4_student_invalid_block_really_is_invalid() {
     // Make sure that the block is not valid when executed.
     assert!(!gb.verify_sub_chain(&vec![b1]));
 }
+
+#[test]
+fn part_4_header_chain_valid() {
+	let g = Header::genesis();
+	let h1 = g.child(5, 10);
+	let h2 = h1.child(6, 11);
+	let h3 = h2.child(7, 12);
+
+	assert!(g.verify_sub_chain(&vec![h1, h2, h3]));
+}
+
+#[test]
+fn part_4_header_chain_invalid() {
+	let g = Header::genesis();
+	let h1 = g.child(5, 10);
+	let mut h2 = h1.child(6, 11);
+	let h3 = h2.child(7, 12);
+
+	h2.state = 3;
+
+	assert!(!g.verify_sub_chain(&vec![h1, h2, h3]));
+}
+
