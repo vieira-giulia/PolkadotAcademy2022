@@ -137,27 +137,53 @@ fn part_4_child_header() {
 
 #[test]
 fn part_4_child_block_empty() {
-    todo!("Test not yet written. You may do this as an exercise. PRs welcome :)")
+	let gb = Block::genesis();
+	let b1 = gb.child(vec![]);
+
+	assert!(gb.verify_sub_chain(&vec![b1]));
 }
 
 #[test]
 fn part_4_verify_three_blocks() {
-    todo!("Test not yet written. You may do this as an exercise. PRs welcome :)")
+	let gb = Block::genesis();
+
+	let b1 = gb.child(vec![0, 1, 2]);
+	let b2 = b1.child(vec![1, 2, 3]);
+	let b3 = b2.child(vec![2, 3, 4]);
+
+	assert!(gb.verify_sub_chain(&vec![b1, b2, b3]));
 }
 
 #[test]
 fn part_4_invalid_header_doesnt_check() {
-    todo!("Test not yet written. You may do this as an exercise. PRs welcome :)")
+	let gh = Header::genesis();
+
+	let mut h1 = gh.child(10, 5);
+	let h2 = h1.child(11, 5);
+	h1.state = 12;
+
+	assert!(!gh.verify_sub_chain(&vec![h1, h2]));
 }
 
 #[test]
 fn part_4_invalid_block_state_doesnt_check() {
-    todo!("Test not yet written. You may do this as an exercise. PRs welcome :)")
+	let gb = Block::genesis();
+	let mut b1 = gb.child(vec![0, 1, 2]);
+	b1.body[2] = 3;
+
+	assert!(!gb.verify_sub_chain(&vec![b1]));
 }
 
 #[test]
 fn part_4_block_with_invalid_header_doesnt_check() {
-    todo!("Test not yet written. You may do this as an exercise. PRs welcome :)")
+	let gb = Block::genesis();
+
+	let b1 = gb.child(vec![0, 1, 2]);
+	let b2 = b1.child(vec![1, 2, 3]);
+	let mut b3 = b2.child(vec![2, 3, 4]);
+	b3.header.parent = 1;
+
+	assert!(!gb.verify_sub_chain(&vec![b1, b2, b3]));
 }
 
 #[test]
@@ -174,3 +200,26 @@ fn part_4_student_invalid_block_really_is_invalid() {
     // Make sure that the block is not valid when executed.
     assert!(!gb.verify_sub_chain(&vec![b1]));
 }
+
+#[test]
+fn part_4_header_chain_valid() {
+	let g = Header::genesis();
+	let h1 = g.child(5, 10);
+	let h2 = h1.child(6, 11);
+	let h3 = h2.child(7, 12);
+
+	assert!(g.verify_sub_chain(&vec![h1, h2, h3]));
+}
+
+#[test]
+fn part_4_header_chain_invalid() {
+	let g = Header::genesis();
+	let h1 = g.child(5, 10);
+	let mut h2 = h1.child(6, 11);
+	let h3 = h2.child(7, 12);
+
+	h2.state = 3;
+
+	assert!(!g.verify_sub_chain(&vec![h1, h2, h3]));
+}
+
