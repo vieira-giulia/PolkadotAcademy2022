@@ -106,6 +106,9 @@ pub fn run() -> sc_cli::Result<()> {
 			let runner = cli.create_runner(cmd)?;
 			runner.sync_run(|config| cmd.run::<Block>(&config))
 		},
+		Some(Subcommand::Custom(_)) => {
+			todo!()
+		},
 		None => {
 			let runner = cli.create_runner(&cli.run)?;
 			runner.run_node_until_exit(|config| async move {
