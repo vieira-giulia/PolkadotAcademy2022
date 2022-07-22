@@ -209,8 +209,8 @@ fn part_2_verify_forked_chain() {
     // For the purposes of leaving open the question below, let's make 
     // the criterion that the final element of one chain is not within  
     // the other chain.
-    assert!(! c1.contains(c2.last().unwrap()));
-    assert!(! c2.contains(c1.last().unwrap()));    
+    assert!(! c1.contains(c2.last().expect("Chain should have at least one block)));
+    assert!(! c2.contains(c1.last().expect("Chain should have at least one block)));    
 
     // The two chains are not identical
     // Question for students: I've only compared the last blocks here.
