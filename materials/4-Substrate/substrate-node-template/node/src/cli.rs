@@ -36,15 +36,18 @@ pub enum Subcommand {
 	/// Revert the chain to a previous state.
 	Revert(sc_cli::RevertCmd),
 
-	/// Custom -- extend it as you wish.
-	Custom(CustomCommand),
-}
+	/// Sub-commands concerned with benchmarking.
+	#[clap(subcommand)]
+	Benchmark(frame_benchmarking_cli::BenchmarkCmd),
 
-#[derive(Debug, clap::Parser)]
-pub struct CustomCommand {
-	/// The salt to use in the transaction. If none is supplied, a "random" one will be chosen
-	pub arg1: Option<u8>,
+	/// Try some command against runtime state.
+	#[cfg(feature = "try-runtime")]
+	TryRuntime(try_runtime_cli::TryRuntimeCmd),
 
-	/// The seed to sign with. If none is provided, Alice's will be used.
-	pub arg2: Option<String>,
+	/// Try some command against runtime state. Note: `try-runtime` feature must be enabled.
+	#[cfg(not(feature = "try-runtime"))]
+	TryRuntime,
+
+	/// Db meta columns information.
+	ChainInfo(sc_cli::ChainInfoCmd),
 }
