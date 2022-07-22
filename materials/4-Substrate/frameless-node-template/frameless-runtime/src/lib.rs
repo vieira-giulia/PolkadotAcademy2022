@@ -63,7 +63,7 @@ pub mod opaque {
 	/// Opaque block header type.
 	pub type Header = generic::Header<BlockNumber, BlakeTwo256>;
 	/// Opaque block type.
-	pub type Block = generic::Block<Header, OpaqueExtrinsic>;
+	pub type Block = generic::Block<Header, BasicExtrinsic>;
 
 	// This part is necessary for generating session keys in the runtime
 	impl_opaque_keys! {
