@@ -13,7 +13,7 @@ use sp_block_builder::runtime_decl_for_BlockBuilder::BlockBuilder;
 use sp_runtime::{
 	create_runtime_str, generic, impl_opaque_keys,
 	traits::{BlakeTwo256, Block as BlockT, Extrinsic},
-	transaction_validity::{TransactionSource, TransactionValidity},
+	transaction_validity::{TransactionSource, TransactionValidity, ValidTransaction},
 	ApplyExtrinsicResult, BoundToRuntimeAppPublic,
 };
 use sp_std::prelude::*;
@@ -31,6 +31,22 @@ use sp_version::RuntimeVersion;
 
 #[cfg(feature = "std")]
 use serde::{Deserialize, Serialize};
+
+/*
+curl http://localhost:9933 -H "Content-Type:application/json;charset=utf-8" -d   '{
+	"jsonrpc":"2.0",
+	"id":1,
+	"method":"author_submitExtrinsic",
+	"params": ["0x"]
+}'
+
+curl http://localhost:9933 -H "Content-Type:application/json;charset=utf-8" -d   '{
+	"jsonrpc":"2.0",
+	"id":1,
+	"method":"state_getStorage",
+	"params": ["0x626F6F6C65616E"]
+}'
+*/
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -111,14 +127,14 @@ pub type Block = generic::Block<Header, BasicExtrinsic>;
 // this extrinsic type does nothing other than fulfill the compiler.
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize, parity_util_mem::MallocSizeOf))]
 #[derive(Encode, Decode, Debug, PartialEq, Eq, Clone)]
-pub struct BasicExtrinsic;
+pub struct BasicExtrinsic(u8);
 
 impl Extrinsic for BasicExtrinsic {
-	type Call = ();
+	type Call = u8;
 	type SignaturePayload = ();
 
-	fn new(_: Self::Call, _: Option<Self::SignaturePayload>) -> Option<Self> {
-		Some(Self)
+	fn new(data: Self::Call, _: Option<Self::SignaturePayload>) -> Option<Self> {
+		Some(Self(data))
 	}
 }
 
@@ -203,7 +219,8 @@ impl_runtime_apis! {
 			info!(target: "frameless", "🖼️ Entering validate_transaction. source: {:?}, tx: {:?}, block hash: {:?}", source, tx, block_hash);
 
 			// we don't know how to validate this -- It should be fine??
-			Ok(Default::default())
+			let data = tx.0;
+			Ok(ValidTransaction { provides: vec![data.encode()], ..Default::default() })
 		}
 	}
 
