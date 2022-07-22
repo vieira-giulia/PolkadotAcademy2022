@@ -40,7 +40,6 @@ pub enum Subcommand {
 	ChainInfo(sc_cli::ChainInfoCmd),
 
 	/// Custom -- extend it as you wish.
-	/// Db meta columns information.
 	Custom(CustomCommand),
 }
 
