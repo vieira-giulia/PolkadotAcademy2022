@@ -38,4 +38,17 @@ pub enum Subcommand {
 
 	/// Db meta columns information.
 	ChainInfo(sc_cli::ChainInfoCmd),
+
+	/// Custom -- extend it as you wish.
+	/// Db meta columns information.
+	Custom(CustomCommand),
+}
+
+#[derive(Debug, clap::Parser)]
+pub struct CustomCommand {
+	/// The salt to use in the transaction. If none is supplied, a "random" one will be chosen
+	pub arg1: Option<u8>,
+
+	/// The seed to sign with. If none is provided, Alice's will be used.
+	pub arg2: Option<String>,
 }
