@@ -36,6 +36,9 @@ pub enum Subcommand {
 	/// Revert the chain to a previous state.
 	Revert(sc_cli::RevertCmd),
 
+	/// Db meta columns information.
+	ChainInfo(sc_cli::ChainInfoCmd),
+
 	/// Custom -- extend it as you wish.
 	Custom(CustomCommand),
 }
